@@ -1,14 +1,15 @@
 {
-  "name": "teste-tecnico-qa",
+  "name": "automation-exercise-qa",
   "version": "1.0.0",
   "description": "Projeto de Quality Assurance com testes E2E automatizados utilizando Cypress.",
   "private": true,
+  "author": "Laura Ajala",
   "scripts": {
     "test": "cypress run",
     "cy:open": "cypress open",
     "cy:run": "cypress run"
   },
   "devDependencies": {
-    "cypress": "^14.0.0"
+    "cypress": "^15.21.1"
   }
 }
