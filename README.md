@@ -8,9 +8,11 @@ Projeto de Quality Assurance desenvolvido para demonstrar a aplicação prática
 
 <br>
 
-![Cypress](https://img.shields.io/badge/Cypress-14.0-17202C?style=for-the-badge&logo=cypress&logoColor=white)
+[![Cypress Tests](https://github.com/laurajala/automation-exercise-qa/actions/workflows/pipeline.yml/badge.svg)](https://github.com/laurajala/automation-exercise-qa/actions/workflows/pipeline.yml)
+
+![Cypress](https://img.shields.io/badge/Cypress-15-17202C?style=for-the-badge&logo=cypress&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Test_Automation-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
 </div>
@@ -265,12 +267,18 @@ Checkout do repositório
         ↓
 Configuração do Node.js
         ↓
-Instalação das dependências
+Instalação das dependências (npm ci, com cache)
         ↓
 Execução do Cypress
         ↓
 Resultado dos testes
+        ↓
+Upload de screenshots (somente em caso de falha)
 ```
+
+Também é possível executar a pipeline manualmente pela aba **Actions**, no botão **Run workflow**.
+
+As dependências são instaladas com `npm ci`, que utiliza exatamente as versões registradas no `package-lock.json`, garantindo o mesmo ambiente em todas as execuções.
 
 O workflow está disponível em:
 
@@ -280,12 +288,7 @@ O workflow está disponível em:
 
 ## ✅ Status dos testes
 
-A suíte automatizada é validada através do GitHub Actions.
-
-```text
-home.cy.js       ✅ PASS
-carrinho.cy.js   ✅ PASS
-```
+O status atual da suíte aparece no badge **Cypress Tests**, no topo deste README, e o histórico de execuções está disponível na aba [Actions](https://github.com/laurajala/automation-exercise-qa/actions).
 
 A execução automática permite identificar falhas nos cenários automatizados após alterações realizadas no projeto.
 
@@ -316,6 +319,7 @@ automation-exercise-qa/
 │
 ├── cypress.config.js
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
@@ -347,7 +351,7 @@ automation-exercise-qa/
 
 Para executar o projeto localmente é necessário possuir:
 
-- Node.js
+- Node.js 20 ou superior
 - npm
 - Git
 
@@ -398,22 +402,6 @@ Também é possível executar através de:
 ```bash
 npm test
 ```
-
----
-
-# ⏱️ Estimativa do Desafio
-
-O planejamento inicial considerou aproximadamente **4 horas e 30 minutos** para realização das atividades.
-
-A estimativa contemplou:
-
-- 🔎 Análise dos fluxos
-- 📝 Documentação
-- 🤖 Desenvolvimento da automação
-- ⚙️ Configuração da pipeline
-- ✅ Revisão final
-
-📄 [Consultar estimativa de esforço](./docs/estimativa.md)
 
 ---
 
@@ -477,7 +465,7 @@ O projeto pode evoluir com a implementação de novos cenários e práticas de a
 
 ### Laura Ajala
 
-**Quality Assurance Engineer**
+**Quality Engineer**
 
 Testes Funcionais • Automação • APIs • Banco de Dados
 
