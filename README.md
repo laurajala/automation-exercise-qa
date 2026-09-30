@@ -174,9 +174,11 @@ Essa estrutura facilita a identificação da origem de cada cenário e sua rela�
 
 A automação foi desenvolvida utilizando **Cypress + JavaScript**.
 
-Atualmente, o projeto possui dois cenários automatizados:
+Atualmente, o projeto possui **8 cenários automatizados**:
 
 - 🏠 Smoke Test da página inicial
+- 👤 Cadastro de usuário: 1 cenário positivo e 2 negativos
+- 🔐 Login: 1 cenário positivo e 2 negativos
 - 🛒 Teste funcional E2E do carrinho de compras
 
 ---
@@ -200,6 +202,48 @@ Validar conteúdo esperado
 ```
 
 Esse teste funciona como uma validação rápida da disponibilidade básica da aplicação.
+
+---
+
+## 👤 Cadastro de Usuário
+
+Arquivo:
+
+`cypress/e2e/cadastro.cy.js`
+
+| Caso | Cenário | Tipo |
+| --- | --- | --- |
+| CT01 | Cadastro realizado com sucesso | Positivo |
+| CT02 | Cadastro sem os campos obrigatórios | Negativo |
+| CT03 | Cadastro com e-mail em formato inválido | Negativo |
+
+- Um e-mail único é gerado a cada execução, evitando conflito de cadastro duplicado.
+- A conta criada é excluída pela API no `afterEach`, mantendo a base limpa mesmo quando o teste falha.
+- Nos cenários negativos, a validação é feita pelo estado do campo (`validity`), já que a aplicação utiliza a validação nativa do navegador.
+
+---
+
+## 🔐 Login
+
+Arquivo:
+
+`cypress/e2e/login.cy.js`
+
+| Caso | Cenário | Tipo |
+| --- | --- | --- |
+| CT04 | Login com credenciais válidas | Positivo |
+| CT05 | Login com senha inválida | Negativo |
+| CT06 | Login sem os campos obrigatórios | Negativo |
+
+O usuário utilizado nos testes é **criado pela API antes de cada cenário** e excluído ao final. Dessa forma, os testes de login não dependem do teste de cadastro e podem ser executados de forma independente.
+
+```text
+beforeEach → cria usuário via API
+      ↓
+Teste → valida o login pela interface
+      ↓
+afterEach → exclui usuário via API
+```
 
 ---
 
@@ -239,11 +283,16 @@ A documentação de testes possui uma cobertura maior do que a automação atual
 | --- | --- | --- |
 | Acesso à página inicial | Smoke Test | ✅ Automatizado |
 | Adicionar produto ao carrinho | E2E / Funcional | ✅ Automatizado |
-| Cadastro de usuário | Funcional | 📋 Documentado |
-| Login | Funcional | 📋 Documentado |
-| Validações adicionais do carrinho | Funcional | 📋 Documentado |
+| Cadastro com sucesso (CT01) | Funcional / Positivo | ✅ Automatizado |
+| Cadastro sem campos obrigatórios (CT02) | Funcional / Negativo | ✅ Automatizado |
+| Cadastro com dados inválidos (CT03) | Funcional / Negativo | ✅ Automatizado |
+| Login com credenciais válidas (CT04) | Funcional / Positivo | ✅ Automatizado |
+| Login com credenciais inválidas (CT05) | Funcional / Negativo | ✅ Automatizado |
+| Login sem campos obrigatórios (CT06) | Funcional / Negativo | ✅ Automatizado |
+| Permanência do produto no carrinho (CT08) | Funcional | 📋 Documentado |
+| Informações do produto no carrinho (CT09) | Funcional | 📋 Documentado |
 
-> A automação contempla cenários selecionados do projeto, enquanto os demais permanecem documentados como parte da estratégia de testes e podem ser incorporados futuramente à suíte automatizada.
+> 7 dos 9 casos de teste documentados estão automatizados. Os demais permanecem documentados como parte da estratégia de testes e podem ser incorporados futuramente à suíte automatizada.
 
 ---
 
@@ -255,6 +304,8 @@ A pipeline executa automaticamente a suíte Cypress quando ocorre:
 
 - `push` na branch `main`
 - `pull_request` direcionado para a branch `main`
+
+Alterações apenas em documentação (`*.md` e `docs/`) não disparam a pipeline, reduzindo execuções desnecessárias contra a aplicação.
 
 ### 🔄 Fluxo da pipeline
 
@@ -292,6 +343,15 @@ O status atual da suíte aparece no badge **Cypress Tests**, no topo deste READM
 
 A execução automática permite identificar falhas nos cenários automatizados após alterações realizadas no projeto.
 
+## ⚠️ Dependência de aplicação externa
+
+Os testes são executados contra um site público de terceiros. Em alguns momentos, a aplicação pode apresentar instabilidade ou exibir uma verificação anti-bot para acessos automatizados, o que faz a suíte falhar sem relação com o código dos testes.
+
+Para lidar com isso:
+
+- A pipeline realiza até **2 novas tentativas** por teste (`retries.runMode`). Testes aprovados apenas após nova tentativa são sinalizados como *flaky* pelo Cypress.
+- Em caso de falha, as **screenshots** são publicadas como artifact da execução, permitindo identificar se o problema está no teste ou no ambiente.
+
 ---
 
 # 🗂️ Estrutura do Projeto
@@ -305,10 +365,16 @@ automation-exercise-qa/
 │
 ├── cypress/
 │   ├── e2e/
+│   │   ├── cadastro.cy.js
 │   │   ├── carrinho.cy.js
-│   │   └── home.cy.js
+│   │   ├── home.cy.js
+│   │   └── login.cy.js
+│   │
+│   ├── fixtures/
+│   │   └── usuario.json
 │   │
 │   └── support/
+│       ├── commands.js
 │       └── e2e.js
 │
 ├── docs/
@@ -431,7 +497,9 @@ npm test
 
 `E2E Testing` • `Assertions`
 
-`DOM Validation`
+`Custom Commands` • `Fixtures`
+
+`Massa de dados via API` • `DOM Validation`
 
 ### ⚙️ Engenharia e CI/CD
 
@@ -447,12 +515,7 @@ npm test
 
 O projeto pode evoluir com a implementação de novos cenários e práticas de automação, como:
 
-- 🤖 Automação dos cenários de login
-- 👤 Automação do fluxo de cadastro
-- 🛒 Ampliação da cobertura do carrinho
-- 🧩 Criação de comandos reutilizáveis
-- 📦 Utilização de fixtures para massa de dados
-- 📸 Armazenamento de evidências de execução
+- 🛒 Automação dos cenários CT08 e CT09 do carrinho
 - 📊 Geração de relatórios automatizados
 - 🔄 Ampliação da suíte de regressão
 - ⚙️ Evolução da pipeline de integração contínua
